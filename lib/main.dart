@@ -20,11 +20,16 @@ Future<void> main() async {
   ]);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-  if (!supabaseUrl.contains('placeholder')) {
+  if (isSupabaseConfigured) {
     try {
-      // ignore: deprecated_member_use
+      // ignore: deprecated_member_use — anonKey ainda suportado em supabase_flutter 2.17; publishableKey é novo alias
       await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
-    } catch (_) {}
+      debugPrint('[Supabase] conectado: $supabaseUrl');
+    } catch (e) {
+      debugPrint('[Supabase] falha ao inicializar: $e — lobby ficará em modo in-memory');
+    }
+  } else {
+    debugPrint('[Supabase] não configurado — lobby in-memory (placeholder)');
   }
 
   runApp(const ProviderScope(child: StumbleBrawlApp()));
