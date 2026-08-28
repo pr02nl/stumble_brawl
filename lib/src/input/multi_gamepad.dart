@@ -85,10 +85,13 @@ class MultiGamepadManager {
         }
       }
     } else {
-      // Eixo analógico
-      if (key.contains('x') || key.contains('lsx') || key.contains('left_x') || key == '0' || key.contains('axis 0')) {
+      // Eixo analógico — removido key=='0' que colidia com botão 0
+      if (key.contains('left_x') || key.contains('lsx') || key.contains('axis 0') || (key.contains('x') && !key.contains('box') && !key.contains('cross'))) {
         double v = value;
         if (v.abs() < deadZone) v = 0;
+        // normaliza - alguns dão 0..1
+        if (v > 1) v = 1;
+        if (v < -1) v = -1;
         state.x = v.clamp(-1.0, 1.0);
       }
       if (key.contains('hat') || key.contains('dpad')) {
@@ -138,15 +141,21 @@ class MultiGamepadManager {
     }
   }
 
+  void handleDisconnect(String padId) {
+    inputsByPadId.remove(padId);
+    pressedByPad.remove(padId);
+  }
+
   void dispose() {
     _sub?.cancel();
   }
 
-  // Simula conexão para teste (teclado)
   void simulatePad(String padId, InputState state) {
     _ensurePad(padId);
     inputsByPadId[padId]!.x = state.x;
     inputsByPadId[padId]!.jump = state.jump;
     inputsByPadId[padId]!.punch = state.punch;
+    inputsByPadId[padId]!.jumpPressedThisFrame = state.jumpPressedThisFrame;
+    inputsByPadId[padId]!.punchPressedThisFrame = state.punchPressedThisFrame;
   }
 }

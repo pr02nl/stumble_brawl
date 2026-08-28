@@ -29,7 +29,10 @@ class _RankingScreenState extends ConsumerState<RankingScreen> {
         backgroundColor: const Color(0xFFFF9500),
         foregroundColor: Colors.white,
         leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => ref.read(gameStateProvider.notifier).toMenu()),
-        actions: [IconButton(icon: const Icon(Icons.delete), onPressed: () async { await ranking.reset(); setState(() {}); })],
+        actions: [IconButton(icon: const Icon(Icons.delete), onPressed: () async {
+          final ok = await showDialog<bool>(context: context, builder: (c)=> AlertDialog(title: const Text('Limpar ranking?'), content: const Text('Isso apaga vitórias e histórico.'), actions: [TextButton(onPressed: ()=> Navigator.pop(c,false), child: const Text('Cancelar')), TextButton(onPressed: ()=> Navigator.pop(c,true), child: const Text('Limpar'))]));
+          if (ok==true) { await ranking.reset(); setState(() {}); }
+        })],
       ),
       body: Container(
         decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFFFFCC00), Color(0xFFFF9500)])),

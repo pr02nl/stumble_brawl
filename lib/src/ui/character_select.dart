@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../game/game_state.dart';
 import '../game/skin_manager.dart';
+import '../world/arena.dart';
 
 class CharacterSelect extends ConsumerStatefulWidget {
   const CharacterSelect({super.key});
@@ -70,8 +71,31 @@ class _CharacterSelectState extends ConsumerState<CharacterSelect> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.white70, fontSize: 10),
               ),
+              const SizedBox(height: 8),
+              // Seletor arena
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  const Text('ARENA:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
+                  const SizedBox(width: 8),
+                  for (final a in allArenas)
+                    GestureDetector(
+                      onTap: () => notifier.setArena(a.id),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: state.arenaId == a.id ? const Color(0xFF4A90E2) : Colors.white,
+                          border: Border.all(color: const Color(0xFF4A90E2)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text('${a.emoji} ${a.name}', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: state.arenaId==a.id?Colors.white:const Color(0xFF4A90E2))),
+                      ),
+                    ),
+                ]),
+              ),
               const SizedBox(height: 12),
-              // Abas por jogador humano
               SizedBox(
                 height: 36,
                 child: ListView.builder(

@@ -46,16 +46,17 @@ class RankingManager {
     final hist = p.getStringList(_kHistory);
     if (hist != null) {
       history = hist.map((e) {
-        // formato simples: name|wins|games|best|isoDate
         final parts = e.split('|');
         if (parts.length < 5) return null;
-        return RankingEntry(
-          playerName: parts[0],
-          wins: int.parse(parts[1]),
-          games: int.parse(parts[2]),
-          bestDamage: int.parse(parts[3]),
-          lastWin: DateTime.parse(parts[4]),
-        );
+        try {
+          return RankingEntry(
+            playerName: parts[0],
+            wins: int.parse(parts[1]),
+            games: int.parse(parts[2]),
+            bestDamage: int.parse(parts[3]),
+            lastWin: DateTime.parse(parts[4]),
+          );
+        } catch (_) { return null; }
       }).whereType<RankingEntry>().toList();
     }
   }

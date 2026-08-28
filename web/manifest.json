@@ -6,7 +6,7 @@
     "background_color": "#4A90E2",
     "theme_color": "#4A90E2",
     "description": "Stumble Brawl - party brawler 1-4 players para mobile e TV com controle.",
-    "orientation": "portrait-primary",
+    "orientation": "any",
     "prefer_related_applications": false,
     "icons": [
         {

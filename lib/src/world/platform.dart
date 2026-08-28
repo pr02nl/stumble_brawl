@@ -33,7 +33,10 @@ class Platform extends PositionComponent with CollisionCallbacks {
     }
   }
 
-  bool get isActive => !_isFalling || position.y < 2000;
+  bool get isActive => !_isFalling;
+  // colidível apenas antes de começar a cair; enquanto caindo não colide
+  bool get isFalling => _isFalling;
+  bool get isTriggered => _triggered;
 
   @override
   void update(double dt) {
@@ -64,12 +67,17 @@ class Platform extends PositionComponent with CollisionCallbacks {
   void render(Canvas canvas) {
     final paint = Paint()..color = _color;
     if (_triggered && !_isFalling) {
-      // pisca vermelho
       final t = (_timeOnPlatform * 10) % 2;
       paint.color = t < 1 ? const Color(0xFFFF6B6B) : _color;
-    }
-    if (_isFalling) {
+      // shake leve
+      canvas.save();
+      final shake = ((_timeOnPlatform * 60) % 2 < 1 ? 1 : -1) * 1.2;
+      canvas.translate(shake, 0);
+    } else if (_isFalling) {
       paint.color = _color.withValues(alpha: 0.6);
+      canvas.save();
+    } else {
+      canvas.save();
     }
     final rrect = RRect.fromRectAndRadius(
       Rect.fromLTWH(0, 0, size.x, size.y),
@@ -89,6 +97,7 @@ class Platform extends PositionComponent with CollisionCallbacks {
       Rect.fromLTWH(4, size.y / 2 - 1, size.x - 8, 2),
       Paint()..color = Colors.white.withValues(alpha: 0.15),
     );
+    canvas.restore();
   }
 
   // Reset para reiniciar rodada

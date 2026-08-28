@@ -34,12 +34,12 @@ class Hud extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.timer, color: Colors.white, size: 18),
+                      Icon(Icons.timer, color: timeLeft < 10 ? Colors.redAccent : Colors.white, size: 18),
                       const SizedBox(width: 6),
                       Text(
-                        timeLeft.toStringAsFixed(0).padLeft(2, '0'),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        '${(timeLeft ~/ 60).toString().padLeft(2,'0')}:${(timeLeft % 60).toStringAsFixed(0).padLeft(2,'0')}',
+                        style: TextStyle(
+                          color: timeLeft < 10 ? Colors.redAccent : Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),

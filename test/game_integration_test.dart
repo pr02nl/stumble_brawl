@@ -20,7 +20,7 @@ void main() {
       }
       expect(game.players.length, 4);
       expect(game.players.where((p) => p.isHuman).length, 1);
-      expect(game.platforms.length, 13);
+      expect(game.platforms.length, 11);
     });
 
     testWidgets('spawns 4 humans when 4 skins', (tester) async {

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AudioManager {
   bool _initialized = false;
@@ -15,6 +16,13 @@ class AudioManager {
 
   Future<void> init() async {
     if (_initialized) return;
+    unawaited(Future(() async {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        _musicOn = prefs.getBool('audio_music') ?? _musicOn;
+        _sfxOn = prefs.getBool('audio_sfx') ?? _sfxOn;
+      } catch (_) {}
+    }));
     try {
       await FlameAudio.audioCache.loadAll([
         'jump.wav',
@@ -25,10 +33,7 @@ class AudioManager {
         'win.wav',
         'bgm.mp3',
       ]).timeout(const Duration(seconds: 2));
-    } catch (_) {
-      // assets podem não existir ainda - ignora
-    }
-    // inicializa BGM vazio
+    } catch (_) {}
     _initialized = true;
   }
 
@@ -65,6 +70,12 @@ class AudioManager {
 
   void setMusic(bool on) {
     _musicOn = on;
+    unawaited(Future(() async {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('audio_music', on);
+      } catch (_) {}
+    }));
     if (!on) {
       stopBgm();
     } else {
@@ -72,7 +83,15 @@ class AudioManager {
     }
   }
 
-  void setSfx(bool on) => _sfxOn = on;
+  void setSfx(bool on) {
+    _sfxOn = on;
+    unawaited(Future(() async {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('audio_sfx', on);
+      } catch (_) {}
+    }));
+  }
 
   void dispose() {
     try {

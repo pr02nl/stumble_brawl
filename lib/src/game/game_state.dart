@@ -13,8 +13,9 @@ enum AppScreen {
 class GameState {
   final AppScreen screen;
   final int selectedColorIndex;
-  final List<int> humanSkins; // para 1-4 humanos
+  final List<int> humanSkins;
   final int humanCount;
+  final String arenaId;
   final String? winnerName;
   final int round;
   final bool winnerIsHuman;
@@ -24,6 +25,7 @@ class GameState {
     this.selectedColorIndex = 0,
     this.humanSkins = const [0],
     this.humanCount = 1,
+    this.arenaId = 'classic',
     this.winnerName,
     this.round = 1,
     this.winnerIsHuman = false,
@@ -34,7 +36,9 @@ class GameState {
     int? selectedColorIndex,
     List<int>? humanSkins,
     int? humanCount,
+    String? arenaId,
     String? winnerName,
+    bool clearWinner = false,
     int? round,
     bool? winnerIsHuman,
   }) {
@@ -43,7 +47,8 @@ class GameState {
       selectedColorIndex: selectedColorIndex ?? this.selectedColorIndex,
       humanSkins: humanSkins ?? this.humanSkins,
       humanCount: humanCount ?? this.humanCount,
-      winnerName: winnerName ?? this.winnerName,
+      arenaId: arenaId ?? this.arenaId,
+      winnerName: clearWinner ? null : (winnerName ?? this.winnerName),
       round: round ?? this.round,
       winnerIsHuman: winnerIsHuman ?? this.winnerIsHuman,
     );
@@ -59,6 +64,7 @@ class GameStateNotifier extends Notifier<GameState> {
     selectedColorIndex: state.selectedColorIndex,
     humanSkins: state.humanSkins,
     humanCount: state.humanCount,
+    arenaId: state.arenaId,
     winnerName: null,
     round: 1,
     winnerIsHuman: false,
@@ -98,6 +104,8 @@ class GameStateNotifier extends Notifier<GameState> {
     if (skins.length > count) skins = skins.sublist(0, count);
     state = state.copyWith(humanCount: count, humanSkins: skins);
   }
+
+  void setArena(String id) => state = state.copyWith(arenaId: id);
 
   void nextRound() => state = state.copyWith(round: state.round + 1);
 }

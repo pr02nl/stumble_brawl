@@ -10,19 +10,23 @@ import '../actors/player.dart';
 import '../audio/audio_manager.dart';
 import '../input/input_state.dart';
 import '../input/multi_gamepad.dart';
+import '../world/arena.dart';
 import '../world/platform.dart';
 import '../world/powerup.dart';
+import '../world/world_config.dart';
 import 'skin_manager.dart';
 
 class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
   final List<int> humanSkins;
   final List<int> botSkins;
+  final String arenaId;
   final VoidCallback? onGameOver;
   final void Function(String winner, bool isHuman)? onWinner;
 
   StumbleBrawlGame({
     required this.humanSkins,
     required this.botSkins,
+    this.arenaId = 'classic',
     this.onGameOver,
     this.onWinner,
   }) : humanInputs = List.generate(humanSkins.length, (_) => InputState());
@@ -45,10 +49,10 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
   String? winnerName;
   bool winnerIsHuman = false;
 
-  static final Vector2 _playerSize = Vector2(36, 44);
+  static final Vector2 _playerSize = Vector2(WorldConfig.playerSize.x, WorldConfig.playerSize.y);
 
   @override
-  Color backgroundColor() => const Color(0xFF87CEEB);
+  Color backgroundColor() => arenaById(arenaId).bgColor;
 
   @override
   Future<void> onLoad() async {
@@ -92,85 +96,10 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
       pu.removeFromParent();
     }
     powerUps.clear();
-
-    _addPlat(
-      Vector2(0, 500),
-      Vector2(900, 40),
-      type: PlatformType.normal,
-      color: const Color(0xFF5D4037),
-    );
-    _addPlat(
-      Vector2(40, 400),
-      Vector2(180, 22),
-      type: PlatformType.normal,
-      color: const Color(0xFF8D6E63),
-    );
-    _addPlat(
-      Vector2(300, 380),
-      Vector2(160, 22),
-      type: PlatformType.falling,
-      color: const Color(0xFFD7A76F),
-    );
-    _addPlat(
-      Vector2(540, 400),
-      Vector2(180, 22),
-      type: PlatformType.normal,
-      color: const Color(0xFF8D6E63),
-    );
-    _addPlat(
-      Vector2(740, 360),
-      Vector2(120, 22),
-      type: PlatformType.falling,
-      color: const Color(0xFFD7A76F),
-    );
-    _addPlat(
-      Vector2(120, 300),
-      Vector2(140, 22),
-      type: PlatformType.falling,
-      color: const Color(0xFFD7A76F),
-    );
-    _addPlat(
-      Vector2(340, 270),
-      Vector2(200, 22),
-      type: PlatformType.normal,
-      color: const Color(0xFF8D6E63),
-    );
-    _addPlat(
-      Vector2(620, 300),
-      Vector2(140, 22),
-      type: PlatformType.falling,
-      color: const Color(0xFFD7A76F),
-    );
-    _addPlat(
-      Vector2(80, 190),
-      Vector2(120, 22),
-      type: PlatformType.normal,
-      color: const Color(0xFF8D6E63),
-    );
-    _addPlat(
-      Vector2(380, 150),
-      Vector2(140, 22),
-      type: PlatformType.falling,
-      color: const Color(0xFFFFAB40),
-    );
-    _addPlat(
-      Vector2(600, 190),
-      Vector2(120, 22),
-      type: PlatformType.normal,
-      color: const Color(0xFF8D6E63),
-    );
-    _addPlat(
-      Vector2(0, 260),
-      Vector2(60, 16),
-      type: PlatformType.normal,
-      color: const Color(0xFF8D6E63),
-    );
-    _addPlat(
-      Vector2(840, 260),
-      Vector2(60, 16),
-      type: PlatformType.normal,
-      color: const Color(0xFF8D6E63),
-    );
+    final arena = arenaById(arenaId);
+    for (final def in arena.platforms) {
+      _addPlat(def.pos.clone(), def.size.clone(), type: def.type, color: def.color);
+    }
   }
 
   void _addPlat(
@@ -196,15 +125,9 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
       botInputs.add(InputState());
     }
 
-    final spawns = [
-      Vector2(100, 140),
-      Vector2(700, 140),
-      Vector2(200, 320),
-      Vector2(600, 320),
-    ];
+    final spawns = arenaById(arenaId).spawns;
 
     int idx = 0;
-    // Humanos
     for (int h = 0; h < humanSkins.length; h++) {
       final skin = allSkins.firstWhere(
         (s) => s.id == humanSkins[h],
@@ -268,6 +191,10 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
     winnerIsHuman = false;
     powerUpTimer = 0;
     nextPowerUpIn = 4 + Random().nextDouble() * 3;
+    _lastTouch.clear();
+    for (int i = 0; i < humanSkins.length; i++) {
+      _lastTouch.add(null);
+    }
   }
 
   void restart() {
@@ -282,23 +209,34 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
     for (final p in players) {
       p.reset();
     }
-    final spawns = [
-      Vector2(100 + Random().nextDouble() * 40, 140),
-      Vector2(700 + Random().nextDouble() * 40 - 20, 140),
-      Vector2(200, 320),
-      Vector2(600, 320),
-    ];
+    final spawns = arenaById(arenaId).spawns;
     for (int i = 0; i < players.length; i++) {
-      players[i].position.setFrom(spawns[i % 4]);
-      players[i].initialPosition.setFrom(spawns[i % 4]);
+      final base = spawns[i % spawns.length].clone() + Vector2(Random().nextDouble()*20-10,0);
+      players[i].position.setFrom(base);
+      players[i].initialPosition.setFrom(base);
     }
     elapsed = 0;
     isGameOver = false;
     winnerName = null;
     winnerIsHuman = false;
+    powerUpTimer = 0;
+    nextPowerUpIn = 4 + Random().nextDouble() * 3;
   }
 
-  // Para touch do primeiro jogador
+  final List<DateTime?> _lastTouch = [];
+
+  void notifyTouch(int idx) {
+    while (_lastTouch.length <= idx) {
+      _lastTouch.add(null);
+    }
+    _lastTouch[idx] = DateTime.now();
+  }
+
+  bool _touchRecent(int idx) {
+    if (idx >= _lastTouch.length || _lastTouch[idx]==null) return false;
+    return DateTime.now().difference(_lastTouch[idx]!).inMilliseconds < 300;
+  }
+
   void setHumanInput(
     int playerIndex, {
     double? x,
@@ -307,6 +245,7 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
     bool jumpPressed = false,
     bool punchPressed = false,
   }) {
+    if (x != null) notifyTouch(playerIndex);
     multiGamepad?.handleKeyboardPlayer(
       playerIndex,
       x: x,
@@ -340,10 +279,10 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
     super.onGameResize(size);
     camera.viewfinder.anchor = Anchor.topLeft;
     camera.viewport.size = size;
-    final scale = min(size.x / 900, size.y / 600);
+    final scale = min(size.x / WorldConfig.width, size.y / WorldConfig.height);
     camera.viewfinder.zoom = scale;
-    final offsetX = (size.x - 900 * scale) / 2 / scale;
-    final offsetY = (size.y - 600 * scale) / 2 / scale;
+    final offsetX = (size.x - WorldConfig.width * scale) / 2 / scale;
+    final offsetY = (size.y - WorldConfig.height * scale) / 2 / scale;
     camera.viewfinder.position = Vector2(-offsetX, -offsetY);
   }
 
@@ -419,9 +358,12 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
         }
       }
 
+      // não sobrescreve touch recente com x=0 do teclado
+      final touchRecent = _touchRecent(i);
+      final effectiveX = (touchRecent && x==0) ? null : x;
       multiGamepad?.handleKeyboardPlayer(
         i,
-        x: x,
+        x: effectiveX,
         jump: jump,
         punch: punch,
         jumpPressed: isDown && jump,
@@ -550,7 +492,7 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
           }
         }
       }
-      if (player.position.y > 850 && player.isAlive) {
+      if (player.position.y > WorldConfig.killY && player.isAlive) {
         player.isAlive = false;
         audioManager.playFall();
       }

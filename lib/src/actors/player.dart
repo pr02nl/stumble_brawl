@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../game/stumble_brawl_game.dart';
 import '../input/input_state.dart';
+import '../world/world_config.dart';
 
 enum PlayerState { idle, run, jump, fall, punch, hit, dead }
 
@@ -212,8 +213,10 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
       if (invulnTime > 0) invulnTime -= dt;
       _damageText?.text = '${damage.toInt()}%';
       _updateAnimation();
-      // flip
-      if ((facing == 1 && scale.x < 0) || (facing == -1 && scale.x > 0)) flipHorizontallyAroundCenter();
+      if ((facing == 1 && scale.x < 0) || (facing == -1 && scale.x > 0)) {
+        flipHorizontallyAroundCenter();
+        if (_damageText != null) _damageText!.scale.x = scale.x < 0 ? -1 : 1;
+      }
       return;
     }
 
@@ -252,8 +255,8 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
         jumpsRemaining = 0;
       }
     }
-    if (!input.jump && velocity.y < -200) {
-      velocity.y *= 0.88;
+    if (!input.jump && velocity.y < -150) {
+      velocity.y *= 0.92;
     }
 
     velocity.y += gravity * dt;
@@ -264,7 +267,7 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
 
     _clampWorld();
 
-    if (position.y > 850) {
+    if (position.y > WorldConfig.killY) {
       isAlive = false;
       velocity.setZero();
       if (_spriteLoaded) current = PlayerState.dead;
@@ -273,13 +276,19 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
     _damageText?.text = '${damage.toInt()}%';
     _updateAnimation();
 
-    // Flip horizontally based on facing - SpriteAnimationGroupComponent uses scale
     if (_spriteLoaded) {
       final shouldFlip = facing == -1;
       final isFlipped = scale.x < 0;
       if (shouldFlip != isFlipped) {
         flipHorizontallyAroundCenter();
+        // counter-flip damageText para não espelhar
+        if (_damageText != null) {
+          _damageText!.scale.x = scale.x < 0 ? -1 : 1;
+        }
       }
+    } else {
+      // fallback sem sprite também mantém damageText legível
+      if (_damageText != null) _damageText!.scale.x = 1;
     }
 
     if (!isAlive) {
@@ -289,7 +298,7 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
 
   void _clampWorld() {
     if (position.x < -20) position.x = -20;
-    if (position.x + size.x > 900) position.x = 900 - size.x;
+    if (position.x + size.x > WorldConfig.width) position.x = WorldConfig.width - size.x;
   }
 
   void landOn(double platformTop) {

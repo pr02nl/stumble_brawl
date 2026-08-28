@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,33 +43,48 @@ class SkinManager {
   static const _kSelected = 'selected_skin';
 
   int coins = 0;
-  Set<int> unlocked = {0, 1, 2, 3, 4, 5}; // gratis liberadas
+  Set<int> unlocked = {0, 1, 2, 3, 4, 5};
   int selectedId = 0;
+  Future<void> _lock = Future.value();
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
     coins = prefs.getInt(_kCoins) ?? 0;
     final list = prefs.getStringList(_kUnlocked);
     if (list != null) {
-      unlocked = list.map((e) => int.parse(e)).toSet();
-      // garante gratis sempre
+      final parsed = <int>{};
+      for (final e in list) {
+        final v = int.tryParse(e);
+        if (v != null) parsed.add(v);
+      }
+      if (parsed.isNotEmpty) unlocked = parsed;
       unlocked.addAll([0, 1, 2, 3, 4, 5]);
     }
     selectedId = prefs.getInt(_kSelected) ?? 0;
     if (!unlocked.contains(selectedId)) selectedId = 0;
   }
 
-  Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_kCoins, coins);
-    await prefs.setStringList(_kUnlocked, unlocked.map((e) => e.toString()).toList());
-    await prefs.setInt(_kSelected, selectedId);
+  Future<void> _save() {
+    final completer = Completer<void>();
+    _lock = _lock.then((_) async {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt(_kCoins, coins);
+        await prefs.setStringList(_kUnlocked, unlocked.map((e) => e.toString()).toList());
+        await prefs.setInt(_kSelected, selectedId);
+        completer.complete();
+      } catch (e) {
+        completer.completeError(e);
+      }
+    });
+    return completer.future;
   }
 
   bool isUnlocked(int id) => unlocked.contains(id);
 
   Future<bool> buy(int id) async {
-    final skin = allSkins.firstWhere((s) => s.id == id);
+    final skin = allSkins.firstWhere((s) => s.id == id, orElse: () => allSkins[0]);
+    if (skin.id != id) return false;
     if (isUnlocked(id)) return true;
     if (coins < skin.price) return false;
     coins -= skin.price;

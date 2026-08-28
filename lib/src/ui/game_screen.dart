@@ -49,6 +49,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final gs = ref.read(gameStateProvider);
     final humanSkins = gs.humanSkins;
     final humanCount = gs.humanCount;
+    final arenaId = gs.arenaId;
     // bot skins: pega do pool de skins desbloqueadas aleatórias que não são dos humanos
     final available = allSkins
         .where((s) => !humanSkins.contains(s.id))
@@ -64,6 +65,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     game = StumbleBrawlGame(
       humanSkins: humanSkins,
       botSkins: botSkins,
+      arenaId: arenaId,
       onWinner: (w, isHuman) {
         // pega dano do vencedor para ranking
         final winnerPlayer = game!.players.firstWhere(

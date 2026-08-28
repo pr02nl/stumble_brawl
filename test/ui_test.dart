@@ -126,7 +126,7 @@ void main() {
       ];
       await tester.pumpWidget(MaterialApp(home: Scaffold(body: Hud(timeLeft: 42, elapsed: 10, players: players))));
       await tester.pump();
-      expect(find.text('42'), findsOneWidget);
+      expect(find.text('00:42'), findsOneWidget);
       expect(find.textContaining('VIVOS'), findsOneWidget);
       expect(find.text('Você'), findsOneWidget);
       expect(find.text('20%'), findsOneWidget);
