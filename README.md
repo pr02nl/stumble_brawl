@@ -7,7 +7,7 @@
 [![Dart](https://img.shields.io/badge/Dart-3.13-blue)](https://dart.dev)
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web%20%7C%20Android%20TV-green)](https://flutter.dev)
 
-`package: stumble_brawl` · `applicationId: br.nom.braga.oliveira.stumblebrawl` · Pasta física atual: `game/` (renomeie para `stumble_brawl/` quando desejar)
+`package: stumble_brawl` · `applicationId: br.nom.braga.oliveira.stumblebrawl` · 
 
 ---
 
@@ -113,7 +113,14 @@ Placeholders vazios em `assets/audio/` já evitam crash (`AudioManager` ignora `
 
 *   [x] MVP 1 humano + 3 bots, 1 arena, física, TV touch+gamepad
 *   [x] V1.1 multi 1-4, skins/loja, power-ups, áudio, ranking
-*   [ ] V1.2 online P2P, 3+ arenas, espectadores, share de clipe
+*   [ ] V1.2 (em progresso, ver `ROADMAP.md`) — veja fases detalhadas
+    *   [ ] Fase 1 Hardening: fixes críticos (Turbo leak, platform isActive, worldConfig, input multi-touch)
+    *   [ ] Fase 2 Conteúdo: 3+ arenas + Leanback TV + polimento
+    *   [ ] Fase 3 Online P2P WebRTC (Firebase signaling) + lobby
+    *   [ ] Fase 4 Espectador + share de clipe + release
+*   [ ] V1.3 futuro: IAP (Google Play Billing), ranking global
+
+> Detalhe completo em `ROADMAP.md` — atualizado a cada fase.
 
 ## 📄 Licença
 
