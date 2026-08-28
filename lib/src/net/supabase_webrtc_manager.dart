@@ -57,9 +57,7 @@ class SupabaseWebRTCManager implements WebRTCManager {
   @override
   Future<void> createRoom(String roomCode) async {
     _roomCode = roomCode;
-    await signaling.createRoom(); // já cria com mesmo code? simplifica: usa code passado
-    // workaround: se createRoom gerou outro code, usa o passado
-    // Força inserção com code específico via update
+    await signaling.createRoomWithCode(roomCode);
     await _createPC();
     _dc = await _pc!.createDataChannel('game', webrtc.RTCDataChannelInit()..ordered = true);
     _bindDC();
