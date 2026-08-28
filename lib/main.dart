@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'supabase_options.dart';
 import 'src/game/game_state.dart';
 import 'src/ui/main_menu.dart';
 import 'src/ui/character_select.dart';
@@ -9,16 +11,21 @@ import 'src/ui/shop_screen.dart';
 import 'src/ui/ranking_screen.dart';
 import 'src/ui/lobby_screen.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Orientação: permite ambos, mas prefere paisagem na TV
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
-  // Esconde barras para TV
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+  if (!supabaseUrl.contains('placeholder')) {
+    try {
+      // ignore: deprecated_member_use
+      await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+    } catch (_) {}
+  }
 
   runApp(const ProviderScope(child: StumbleBrawlApp()));
 }
