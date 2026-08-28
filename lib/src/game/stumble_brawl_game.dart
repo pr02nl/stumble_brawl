@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../actors/bot_controller.dart';
@@ -56,7 +55,9 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
     await super.onLoad();
     // Preload spritesheet for Player - 12 skins x 4 frames
     try {
-      await images.load('player_spritesheet.png').timeout(const Duration(seconds: 2));
+      await images
+          .load('player_spritesheet.png')
+          .timeout(const Duration(seconds: 2));
     } catch (_) {
       // fallback if missing - Player will use canvas
     }
@@ -357,12 +358,20 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
       bool punch = false;
 
       if (humanInputs.length == 1) {
-        if (keysPressed.contains(LogicalKeyboardKey.keyA) || keysPressed.contains(LogicalKeyboardKey.arrowLeft)) x -= 1;
-        if (keysPressed.contains(LogicalKeyboardKey.keyD) || keysPressed.contains(LogicalKeyboardKey.arrowRight)) x += 1;
-        jump = keysPressed.contains(LogicalKeyboardKey.keyW) ||
+        if (keysPressed.contains(LogicalKeyboardKey.keyA) ||
+            keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
+          x -= 1;
+        }
+        if (keysPressed.contains(LogicalKeyboardKey.keyD) ||
+            keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
+          x += 1;
+        }
+        jump =
+            keysPressed.contains(LogicalKeyboardKey.keyW) ||
             keysPressed.contains(LogicalKeyboardKey.space) ||
             keysPressed.contains(LogicalKeyboardKey.arrowUp);
-        punch = keysPressed.contains(LogicalKeyboardKey.keyF) ||
+        punch =
+            keysPressed.contains(LogicalKeyboardKey.keyF) ||
             keysPressed.contains(LogicalKeyboardKey.keyJ) ||
             keysPressed.contains(LogicalKeyboardKey.keyX) ||
             keysPressed.contains(LogicalKeyboardKey.enter) ||
@@ -373,25 +382,40 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
         if (i == 0) {
           if (keysPressed.contains(LogicalKeyboardKey.keyA)) x -= 1;
           if (keysPressed.contains(LogicalKeyboardKey.keyD)) x += 1;
-          jump = keysPressed.contains(LogicalKeyboardKey.keyW) || keysPressed.contains(LogicalKeyboardKey.space);
-          punch = keysPressed.contains(LogicalKeyboardKey.keyF) || keysPressed.contains(LogicalKeyboardKey.keyG);
+          jump =
+              keysPressed.contains(LogicalKeyboardKey.keyW) ||
+              keysPressed.contains(LogicalKeyboardKey.space);
+          punch =
+              keysPressed.contains(LogicalKeyboardKey.keyF) ||
+              keysPressed.contains(LogicalKeyboardKey.keyG);
         } else if (i == 1) {
           if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) x -= 1;
           if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) x += 1;
-          jump = keysPressed.contains(LogicalKeyboardKey.arrowUp) || keysPressed.contains(LogicalKeyboardKey.numpad0);
-          punch = keysPressed.contains(LogicalKeyboardKey.enter) ||
+          jump =
+              keysPressed.contains(LogicalKeyboardKey.arrowUp) ||
+              keysPressed.contains(LogicalKeyboardKey.numpad0);
+          punch =
+              keysPressed.contains(LogicalKeyboardKey.enter) ||
               keysPressed.contains(LogicalKeyboardKey.numpad1) ||
               keysPressed.contains(LogicalKeyboardKey.keyK);
         } else if (i == 2) {
           if (keysPressed.contains(LogicalKeyboardKey.keyJ)) x -= 1;
           if (keysPressed.contains(LogicalKeyboardKey.keyL)) x += 1;
-          jump = keysPressed.contains(LogicalKeyboardKey.keyI) || keysPressed.contains(LogicalKeyboardKey.keyO);
-          punch = keysPressed.contains(LogicalKeyboardKey.keyU) || keysPressed.contains(LogicalKeyboardKey.keyP);
+          jump =
+              keysPressed.contains(LogicalKeyboardKey.keyI) ||
+              keysPressed.contains(LogicalKeyboardKey.keyO);
+          punch =
+              keysPressed.contains(LogicalKeyboardKey.keyU) ||
+              keysPressed.contains(LogicalKeyboardKey.keyP);
         } else if (i == 3) {
           if (keysPressed.contains(LogicalKeyboardKey.numpad4)) x -= 1;
           if (keysPressed.contains(LogicalKeyboardKey.numpad6)) x += 1;
-          jump = keysPressed.contains(LogicalKeyboardKey.numpad8) || keysPressed.contains(LogicalKeyboardKey.numpad5);
-          punch = keysPressed.contains(LogicalKeyboardKey.numpad1) || keysPressed.contains(LogicalKeyboardKey.numpadEnter);
+          jump =
+              keysPressed.contains(LogicalKeyboardKey.numpad8) ||
+              keysPressed.contains(LogicalKeyboardKey.numpad5);
+          punch =
+              keysPressed.contains(LogicalKeyboardKey.numpad1) ||
+              keysPressed.contains(LogicalKeyboardKey.numpadEnter);
         }
       }
 
