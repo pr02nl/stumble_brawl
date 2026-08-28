@@ -15,7 +15,7 @@ class SupabaseSignalingManager {
 
   static SupabaseClient? _initClient() {
     try {
-      if (supabaseUrl.contains('placeholder')) return null;
+      if (!isSupabaseConfigured) return null;
       // Supabase.initialize pode não ter sido chamado ainda (main.dart faz)
       return Supabase.instance.client;
     } catch (_) {
@@ -23,7 +23,7 @@ class SupabaseSignalingManager {
     }
   }
 
-  bool get isConfigured => _client != null && !supabaseUrl.contains('placeholder');
+  bool get isConfigured => _client != null && isSupabaseConfigured;
 
   // Fallback in-memory para testes sem Supabase
   final Map<String, Map<String, dynamic>> _memoryRooms = {};
@@ -36,6 +36,10 @@ class SupabaseSignalingManager {
 
   Future<String> createRoom() async {
     final code = _genCode();
+    return createRoomWithCode(code);
+  }
+
+  Future<String> createRoomWithCode(String code) async {
     _currentCode = code;
     if (!isConfigured) {
       _memoryRooms[code] = {'code': code, 'offer': null, 'answer': null, 'candidates': []};
@@ -46,7 +50,7 @@ class SupabaseSignalingManager {
       _subscribe(code);
       return code;
     } catch (e) {
-      // fallback memory se RLS/tabela não existir
+      // fallback memory se RLS/tabela não existir ou código duplicado
       _memoryRooms[code] = {'code': code, 'offer': null, 'answer': null, 'candidates': []};
       return code;
     }
