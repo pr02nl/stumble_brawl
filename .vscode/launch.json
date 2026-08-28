@@ -1,0 +1,45 @@
+{
+  // VS Code — Stumble Brawl
+  // Usa .env local (ignorado) via --dart-define-from-file
+  // .env deve conter SUPABASE_URL e SUPABASE_ANON_KEY (ver .env.example)
+  // F5 → escolhe config. Sem .env → lobby cai para in-memory stub.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Stumble Brawl (Supabase .env)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--dart-define-from-file=.env"],
+      "console": "debugConsole"
+    },
+    {
+      "name": "Stumble Brawl (Supabase — dart-define env vars)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=SUPABASE_URL=${env:SUPABASE_URL}",
+        "--dart-define=SUPABASE_ANON_KEY=${env:SUPABASE_ANON_KEY}"
+      ],
+      "console": "debugConsole"
+    },
+    {
+      "name": "Stumble Brawl (in-memory stub)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [],
+      "console": "debugConsole"
+    },
+    {
+      "name": "Stumble Brawl Web (Supabase .env)",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "chrome",
+      "program": "lib/main.dart",
+      "args": ["--dart-define-from-file=.env"],
+      "console": "debugConsole"
+    }
+  ]
+}
