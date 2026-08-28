@@ -50,13 +50,18 @@ Resultado: `flutter analyze 0`, `flutter test 111` pass (ui_test ajustado 00:42)
 - 2026-08-28 00h: cria ROADMAP.md, inicia Fase 1
 - 2026-08-28 06h: Fase 1 concluída — analyze 0, test 111 pass
 - 2026-08-28 07h: Fase 2 arenas+leanback + stubs Fase3/4
-- 2026-08-28 09h: Fase 2 polimento + Fase 3/4 implementados (spectator, share_plus, lobby, net_sync in-memory) — `1.1.0+2` — analyze 0, test 111 pass
-- Próximo: Firebase WebRTC prod + `flutter build web`/`apk --release` → tag `v1.2` (IAP fica V1.3)
+- 2026-08-28 09h: Fase 2 polimento + Fase 3/4 (spectator, share_plus, lobby, net_sync) — `1.1.0+2` — analyze 0, test 111
+- 2026-08-28 10h: 100% cross-platform — `flutter create --platforms=linux,windows` gerado, `supabase_flutter 2.17.2` + `flutter_webrtc 1.6.0` + `lib/supabase_options.dart:1` placeholder, `supabase_signaling.dart:1` + `supabase_webrtc_manager.dart:1` nativo, `main.dart:18` Supabase init, `build/web` ✓ 41s
+- Próximo: criar projeto Supabase (SQL `rooms`), preencher `supabase_options.dart` ou `--dart-define`, `flutter build linux` (requer `libgstreamer1.0-dev`) / `flutter build windows` (VS2022) → tag `v1.2` (IAP V1.3)
 
 ## Como verificar progresso
 ```bash
-flutter analyze && flutter test
-flutter build apk --debug && flutter build web
+flutter analyze && flutter test  # 0 issues, 111 pass
+flutter build web                # ✓ 41s
+flutter build linux --debug      # requer sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev cmake ninja-build
+flutter build windows            # requer VS2022 + Windows SDK no host Windows
+flutter build apk --debug
+# Supabase: flutter run --dart-define=SUPABASE_URL=https://xxx.supabase.co --dart-define=SUPABASE_ANON_KEY=eyJ...
 ```
 Histórico de testes e `coverage/lcov.info` acompanham cada fase.
 
