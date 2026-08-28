@@ -95,6 +95,17 @@ class _MainMenuState extends ConsumerState<MainMenu> {
                   const SizedBox(width: 10),
                   SizedBox(width: 125, height: 52, child: _SmallButton(label: 'RANKING', icon: Icons.leaderboard, color: const Color(0xFFFF9500), onPressed: () => ref.read(gameStateProvider.notifier).toRanking())),
                 ]),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: 260,
+                  height: 44,
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.wifi, size: 18),
+                    label: const Text('ONLINE LOBBY (WIP)', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 12)),
+                    style: OutlinedButton.styleFrom(foregroundColor: Colors.white, side: const BorderSide(color: Colors.white, width: 1.5), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                    onPressed: () => ref.read(gameStateProvider.notifier).toLobby(),
+                  ),
+                ),
                 const SizedBox(height: 10),
                 _MenuButton(
                   label: 'COMO JOGAR',
@@ -152,20 +163,23 @@ class _MenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 260,
-      height: 52,
-      child: ElevatedButton.icon(
-        icon: Icon(icon, color: Colors.white, size: 26),
-        label: Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white)),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          elevation: 6,
-          shadowColor: Colors.black38,
+    return Focus(
+      canRequestFocus: true,
+      child: SizedBox(
+        width: 260,
+        height: 52,
+        child: ElevatedButton.icon(
+          icon: Icon(icon, color: Colors.white, size: 26),
+          label: Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white)),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: color,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 6,
+            shadowColor: Colors.black38,
+          ),
+          onPressed: onPressed,
         ),
-        onPressed: onPressed,
       ),
     );
   }
@@ -179,11 +193,14 @@ class _SmallButton extends StatelessWidget {
   const _SmallButton({required this.label, required this.icon, required this.color, required this.onPressed});
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      icon: Icon(icon, color: Colors.white, size: 20),
-      label: Text(label, style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 12)),
-      style: ElevatedButton.styleFrom(backgroundColor: color, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)), elevation: 5),
-      onPressed: onPressed,
+    return Focus(
+      canRequestFocus: true,
+      child: ElevatedButton.icon(
+        icon: Icon(icon, color: Colors.white, size: 20),
+        label: Text(label, style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 12)),
+        style: ElevatedButton.styleFrom(backgroundColor: color, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)), elevation: 5),
+        onPressed: onPressed,
+      ),
     );
   }
 }

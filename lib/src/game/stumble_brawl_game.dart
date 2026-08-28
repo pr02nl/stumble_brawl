@@ -14,6 +14,7 @@ import '../world/arena.dart';
 import '../world/platform.dart';
 import '../world/powerup.dart';
 import '../world/world_config.dart';
+import '../clip/replay_buffer.dart';
 import 'skin_manager.dart';
 
 class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
@@ -42,6 +43,8 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
 
   double powerUpTimer = 0;
   double nextPowerUpIn = 5;
+
+  final ReplayBuffer replayBuffer = ReplayBuffer();
 
   bool isGameOver = false;
   double roundTime = 75;
@@ -525,11 +528,33 @@ class StumbleBrawlGame extends FlameGame with HasCollisionDetection {
       }
     }
 
+    // Replay buffer
+    replayBuffer.record(elapsed, players.map((p) => p.position.clone()).toList(), players.map((p) => p.damage).toList());
+
+    // Espectador: se humano local morreu, câmera segue vivos (lerp suave)
+    final humansAlive = players.where((p) => p.isHuman && p.isAlive).length;
+    final hasSpectator = humansAlive == 0 && alive.isNotEmpty && players.any((p) => p.isHuman);
+    if (hasSpectator) {
+      double avgX = 0, avgY = 0;
+      for (final a in alive) { avgX += a.position.x; avgY += a.position.y; }
+      avgX /= alive.length; avgY /= alive.length;
+      final target = Vector2(avgX - WorldConfig.width / 2, avgY - WorldConfig.height / 2);
+      // mantém enquadramento dentro do mundo + offset base da câmera
+      final base = camera.viewfinder.position;
+      const lerpSpeed = 2.0;
+      camera.viewfinder.position = Vector2(
+        base.x + (target.x - base.x) * lerpSpeed * dt,
+        base.y + (target.y - base.y) * lerpSpeed * dt,
+      );
+    }
+
     multiGamepad?.clearFrame();
     for (final bi in botInputs) {
       bi.clearFrameFlags();
     }
   }
+
+  bool get isSpectating => players.any((p) => p.isHuman) && players.where((p) => p.isHuman && p.isAlive).isEmpty && players.where((p) => p.isAlive).isNotEmpty;
 
   @override
   void onRemove() {

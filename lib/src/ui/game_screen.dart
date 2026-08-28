@@ -9,6 +9,7 @@ import '../game/game_state.dart';
 import '../game/ranking.dart';
 import '../game/skin_manager.dart';
 import '../game/stumble_brawl_game.dart';
+import '../clip/clip_exporter.dart';
 import 'hud.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
@@ -156,6 +157,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       timeLeft: (gg.roundTime - gg.elapsed).clamp(0, 999),
                       elapsed: gg.elapsed,
                       players: gg.players,
+                      isSpectating: gg.isSpectating,
                     ),
                   );
                 },
@@ -545,7 +547,20 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: 250,
+                height: 44,
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.share, size: 18),
+                  label: const Text('COMPARTILHAR CLIPE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  style: OutlinedButton.styleFrom(foregroundColor: Colors.white, side: const BorderSide(color: Colors.white, width: 1.5), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  onPressed: () async {
+                    if (game != null) await ClipExporter.shareResult(game!, winner);
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
               SizedBox(
                 width: 250,
                 height: 52,

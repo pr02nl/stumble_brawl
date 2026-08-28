@@ -8,6 +8,7 @@ enum AppScreen {
   gameOver,
   shop,
   ranking,
+  lobby,
 }
 
 class GameState {
@@ -73,6 +74,7 @@ class GameStateNotifier extends Notifier<GameState> {
       state = state.copyWith(screen: AppScreen.characterSelect);
   void toShop() => state = state.copyWith(screen: AppScreen.shop);
   void toRanking() => state = state.copyWith(screen: AppScreen.ranking);
+  void toLobby() => state = state.copyWith(screen: AppScreen.lobby);
   void toPlaying() => state = state.copyWith(screen: AppScreen.playing);
   void toPaused() => state = state.copyWith(screen: AppScreen.paused);
   void toGameOver(String winner, {bool isHuman = false}) =>
@@ -115,10 +117,10 @@ final gameStateProvider = NotifierProvider<GameStateNotifier, GameState>(
 );
 
 final playerColors = [
-  0xFF00D1FF, // ciano
-  0xFFFF3B30, // vermelho
-  0xFFFFCC00, // amarelo
-  0xFF4CD964, // verde
-  0xFFFF2D92, // rosa
-  0xFF9D4EDD, // roxo
+  0xFF00D1FF,
+  0xFFFF3B30,
+  0xFFFFCC00,
+  0xFF4CD964,
+  0xFFFF2D92,
+  0xFF9D4EDD,
 ];

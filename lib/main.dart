@@ -7,6 +7,7 @@ import 'src/ui/character_select.dart';
 import 'src/ui/game_screen.dart';
 import 'src/ui/shop_screen.dart';
 import 'src/ui/ranking_screen.dart';
+import 'src/ui/lobby_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,8 +42,9 @@ class StumbleBrawlApp extends ConsumerWidget {
         AppScreen.characterSelect => const CharacterSelect(),
         AppScreen.shop => const ShopScreen(),
         AppScreen.ranking => const RankingScreen(),
+        AppScreen.lobby => const LobbyScreen(),
         AppScreen.playing => const GameScreen(),
-        AppScreen.gameOver => const GameScreen(), // GameScreen gerencia gameOver interno
+        AppScreen.gameOver => const GameScreen(),
         AppScreen.paused => const GameScreen(),
       },
     );

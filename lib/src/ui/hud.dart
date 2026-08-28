@@ -6,11 +6,13 @@ class Hud extends StatelessWidget {
   final double timeLeft;
   final double elapsed;
   final List<Player> players;
+  final bool isSpectating;
   const Hud({
     super.key,
     required this.timeLeft,
     required this.elapsed,
     required this.players,
+    this.isSpectating = false,
   });
 
   @override
@@ -66,7 +68,13 @@ class Hud extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            if (isSpectating)
+              Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(color: const Color(0xFF9D4EDD), borderRadius: BorderRadius.circular(20)),
+                child: const Row(mainAxisSize: MainAxisSize.min, children: [Icon(Icons.visibility, color: Colors.white, size: 14), SizedBox(width: 6), Text('ESPECTANDO', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 11))]),
+              ),
             Row(
               children: players.map((p) {
                 final alive = p.isAlive;
