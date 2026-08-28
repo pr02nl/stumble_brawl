@@ -1,29 +1,25 @@
-// Supabase config — substitua pelos valores do seu projeto
-// Crie em https://supabase.com/dashboard → New Project → Settings → API
-// Depois: flutter pub add supabase_flutter e inicialize em main.dart
-// Este placeholder permite build sem credenciais (online lobby ficará em modo stub)
+// Supabase config — não commitar chaves reais em repo público
+// Infra já configurada (tabela public.rooms + Realtime) — ver supabase/migrations
+// Injeção via --dart-define (recomendado) ou env:
+//   flutter run --dart-define=SUPABASE_URL=https://xxx.supabase.co --dart-define=SUPABASE_ANON_KEY=eyJ...
+// Obtenha as chaves em https://supabase.com/dashboard → Settings → API
+// Este placeholder mantém build sem credenciais (lobby cai para in-memory stub)
 
-const String supabaseUrl = String.fromEnvironment('SUPABASE_URL', defaultValue: 'https://placeholder.supabase.co');
-const String supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: 'placeholder-anon-key');
+const String supabaseUrl = String.fromEnvironment(
+  'SUPABASE_URL',
+  defaultValue: 'https://placeholder.supabase.co',
+);
+const String supabaseAnonKey = String.fromEnvironment(
+  'SUPABASE_ANON_KEY',
+  defaultValue: 'placeholder-anon-key',
+);
 
-// Instruções:
-// 1) Crie projeto supabase.com (region sa-east-1 recomendado)
-// 2) SQL Editor → crie tabela:
-//
-//    create table rooms (
-//      code text primary key,
-//      host_id text,
-//      offer jsonb,
-//      answer jsonb,
-//      candidates jsonb,
-//      created_at timestamptz default now()
-//    );
-//    alter table rooms enable row level security;
-//    create policy "open" on rooms for all using (true) with check (true);
-//    -- Database → Publications → enable Realtime para `rooms`
-//
-// 3) Defina env ou edite este arquivo:
-//    flutter run --dart-define=SUPABASE_URL=https://xxx.supabase.co --dart-define=SUPABASE_ANON_KEY=eyJ...
-//    ou edite diretamente as consts acima.
-//
-// 4) Teste: Lobby → Criar Sala → código 6 chars → 2 devices Join
+bool get isSupabaseConfigured =>
+    !supabaseUrl.contains('placeholder') && !supabaseAnonKey.contains('placeholder');
+
+// Instruções (infra já aplicada):
+// 1) Migração supabase/migrations/20260828033105_create_rooms_for_webrtc.sql
+//    cria public.rooms (code PK 6 chars, offer/answer/candidates jsonb, updated_at trigger,
+//    RLS anon+authenticated using true, Realtime publication, grant anon/authenticated)
+// 2) Teste: Lobby → Criar Sala → código 6 chars → 2 devices Join
+//    (SupabaseSignalingManager + SupabaseWebRTCManager, fallback in-memory se não configurado)

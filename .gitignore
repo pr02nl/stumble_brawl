@@ -47,7 +47,13 @@ app.*.map.json
 # Widget Preview related
 .widget_preview/
 
-# Supabase
+# Supabase / secrets — repo público, não commitar chaves
 .env
+.env.*
+!.env.example
+*.key
+.supabase/
 supabase/.temp/
 supabase/.branches/
+supabase/.env
+supabase/.env.local
